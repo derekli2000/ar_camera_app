@@ -2,6 +2,7 @@
 	This file allows for the validation of inputted data
  */
 
+import 'package:arcameraapp/screens/camera_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -65,8 +66,8 @@ class LoginFormState extends State<LoginForm> {
 	void _displayErrors(int val) async {
 		switch (val) {
 			case 200:{
-				final SharedPreferences prefs = await _prefs;
-				prefs.setBool('isLoggedIn', true);
+				Navigator.push(context,
+						MaterialPageRoute(builder: (BuildContext context) => CameraScreen()));
 				break;
 			}
 			case 401: {
@@ -90,7 +91,6 @@ class LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Form(
 			key: _formKey,
 			child: Column(
@@ -152,9 +152,11 @@ class LoginFormState extends State<LoginForm> {
 									// Validate returns true if the form is valid, otherwise false.
 									if (form.validate()) {
 										print('$_username $_password');
-										var response = await Provider.of<AuthService>(context)
-												.loginUser(username: _username, password: _password);
-
+										AuthService a = new AuthService();
+										var response = await a.loginUser(
+												username: _username,
+												password: _password
+										);
 										print('Response $response');
 										_displayErrors(response);
 									}

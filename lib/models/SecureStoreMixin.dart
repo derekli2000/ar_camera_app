@@ -12,11 +12,11 @@ class SecureStoreMixin {
 	Future<User> getCurrentUser() async {
 		String username = await storage.read(key: 'username');
 		String password = await storage.read(key: 'password');
-		return new User(username, password);
-	}
 
-	Future<Map<String, String>> getAllValuesStore() async {
-		Map<String, String> allValues = await storage.readAll();
-		return allValues;
+		if (username == null) {
+			return new User('', '');
+		}
+
+		return new User(username, password);
 	}
 }

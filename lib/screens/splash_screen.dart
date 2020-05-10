@@ -1,7 +1,8 @@
-
 import 'dart:async';
 
+import 'package:arcameraapp/models/user.dart';
 import 'package:arcameraapp/screens/login.dart';
+import 'package:arcameraapp/services/auth_service.dart';
 import 'package:camera/new/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,53 +10,87 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'camera_screen.dart';
 
 class SplashScreen extends StatefulWidget {
-	@override
-	State<StatefulWidget> createState() {
-		// TODO: implement createState
-		return _SplashScreenState();
-	}
+  @override
+  State<StatefulWidget> createState() {
+    return _SplashScreenState();
+  }
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-	@override
-	void initState() {
-		super.initState();
-		navigateUser();
-	}
+  String user;
 
-	@override
-	Widget build(BuildContext context) {
-		return Scaffold(
-			body: Container(
-				decoration: BoxDecoration(
-					image: DecorationImage(
-							image: AssetImage("assets/splash.png"),
-							fit: BoxFit.cover),
-				),
-			),
-		);
-	}
+  @override
+  void initState() {
+    super.initState();
+    handleInitialState();
+  }
 
-	void startTimer() {
-		Timer(Duration(seconds: 1), () {
-			navigateUser(); //It will redirect  after 1 seconds
-		});
-	}
+  @override
+  Widget build(BuildContext context) {
+    print("first build $user");
+    if (user == null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/splash.png"), fit: BoxFit.cover),
+          ),
+        ),
+      );
+    }
+//
+    if (user == '') {
+      return Scaffold(
+          body: Container(
+        child: LoginPage(),
+      ));
+    }
 
-	void navigateUser() async {
-		SharedPreferences prefs = await SharedPreferences.getInstance();
-		var status = prefs.getBool('isLoggedIn') ?? false;
-		print(status);
-		if (status) {
-			Navigator.pushReplacement(
-					context,
-					MaterialPageRoute(builder: (BuildContext context) => CameraScreen())
-			);
-		} else {
-			Navigator.pushReplacement(
-					context,
-					MaterialPageRoute(builder: (BuildContext context) => LoginPage())
-			);
-		}
-	}
+    return Scaffold(
+      body: Container(
+        child: CameraScreen(),
+      ),
+    );
+  }
+
+  // Determines whether the user is logged in or not
+  void handleInitialState() {
+    AuthService a = new AuthService();
+    a.getUser().then((User u) {
+      print('hello 1234');
+      setState(() {
+        print('handleInitialState: setState(${u.username})');
+        user = u.username;
+      });
+    });
+  }
+
+  void navigateUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var status = prefs.getBool('isLoggedIn') ?? false;
+    print(status);
+    if (status) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) => CameraScreen()));
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+    }
+  }
 }
+
+//FutureBuilder(
+//        // get the Provider, and call the getUser method
+//        future: Provider.of<AuthService>(context).getUser(),
+//        // wait for the future to resolve and render the appropriate
+//        // widget for HomePage or LoginPage
+//        builder: (context, AsyncSnapshot snapshot) {
+//          if (snapshot.connectionState == ConnectionState.done) {
+//            return snapshot.hasData ? CameraScreen() : SplashScreen();
+//          } else {
+//            return CircularProgressIndicator(
+//              backgroundColor: Colors.red,
+//            );
+//          }
+//        },
+//      ),
