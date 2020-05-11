@@ -73,7 +73,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   /// Display Camera preview.
-  Widget _cameraPreviewWidget() {
+  Widget _cameraPreviewWidget(BuildContext context) {
     if (cameraController == null || !cameraController.value.isInitialized) {
       return const Text(
         'Loading',
@@ -84,54 +84,41 @@ class _CameraScreenState extends State<CameraScreen> {
         ),
       );
     }
+    var size = MediaQuery.of(context).size;
+    double deviceRatio = size.width / size.height;
 
-    return AspectRatio(
-      aspectRatio: cameraController.value.aspectRatio,
-      child: CameraPreview(cameraController),
+    return Transform.scale(
+      scale: cameraController.value.aspectRatio / deviceRatio,
+      child: Center(
+        child: AspectRatio(
+          aspectRatio: cameraController.value.aspectRatio,
+          child: CameraPreview(cameraController),
+        ),
+      ),
     );
   }
 
   /// Display the control bar with buttons to take pictures
   Widget _captureControlRowWidget(context) {
     return Expanded(
-      child: Align(
-        alignment: Alignment.center,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            FloatingActionButton(
-                child: Icon(Icons.camera),
-                onPressed: () {
-                  _onCapturePressed(context);
-                })
-          ],
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 30.0),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              FloatingActionButton(
+                  child: Icon(Icons.camera),
+                  onPressed: () {
+                    _onCapturePressed(context);
+                  })
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  /// Display a row of toggle to select the camera (or a message if no camera is available).
-
-
-  IconData _getCameraLensIcon(CameraLensDirection direction) {
-    switch (direction) {
-      case CameraLensDirection.back:
-        return Icons.camera_rear;
-      case CameraLensDirection.front:
-        return Icons.camera_front;
-      case CameraLensDirection.external:
-        return Icons.camera;
-      default:
-        return Icons.device_unknown;
-    }
-  }
-
-  void _onSwitchCamera() {
-    selectedCameraIdx =
-        selectedCameraIdx < cameras.length - 1 ? selectedCameraIdx + 1 : 0;
-    CameraDescription selectedCamera = cameras[selectedCameraIdx];
-    _initCameraController(selectedCamera);
   }
 
   void _onCapturePressed(context) async {
@@ -163,29 +150,57 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Stack(
             children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: _cameraPreviewWidget(),
-              ),
-              SizedBox(height: 10.0),
+              ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8.0),
+                      topRight: Radius.circular(8.0)),
+                  child: _cameraPreviewWidget(context)),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-//                  _cameraTogglesRowWidget(),
                   _captureControlRowWidget(context),
                 ],
               ),
-              SizedBox(height: 20.0)
             ],
           ),
         ),
       ),
     );
+//    return Scaffold(
+//      body: Container(
+//        child: SafeArea(
+//          child: Column(
+//            crossAxisAlignment: CrossAxisAlignment.stretch,
+//            children: <Widget>[
+//              Expanded(
+//                flex: 1,
+//                child: Padding(
+//                  padding: const EdgeInsets.all(8.0),
+//                  child: ClipRRect(
+//                      borderRadius: BorderRadius.circular(8.0),
+//                      child: _cameraPreviewWidget()
+//                  ),
+//                ),
+//              ),
+//              SizedBox(height: 10.0),
+//              Row(
+//                mainAxisAlignment: MainAxisAlignment.center,
+//                children: [
+////                  _cameraTogglesRowWidget(),
+//                  _captureControlRowWidget(context),
+//                ],
+//              ),
+//              SizedBox(height: 20.0)
+//            ],
+//          ),
+//        ),
+//      ),
+//    );
   }
 }

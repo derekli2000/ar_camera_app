@@ -6,7 +6,6 @@ import 'package:arcameraapp/services/auth_service.dart';
 import 'package:camera/new/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'camera_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -33,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("assets/splash.png"), fit: BoxFit.cover),
+                image: AssetImage("assets/images/splash.png"), fit: BoxFit.cover),
           ),
         ),
       );
