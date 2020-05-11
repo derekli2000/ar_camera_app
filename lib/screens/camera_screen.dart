@@ -1,3 +1,5 @@
+import 'package:arcameraapp/main.dart';
+import 'package:arcameraapp/models/SecureStoreMixin.dart';
 import 'package:arcameraapp/widgets/account_dialog.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +14,21 @@ class CameraScreen extends StatefulWidget {
   }
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
   CameraController cameraController;
   List cameras;
   int selectedCameraIdx;
   String imagePath;
+  String user;
 
   @override
   void initState() {
     super.initState();
+    getUsername().then((username) {
+      setState(() {
+        user = username;
+      });
+    });
     availableCameras().then((availableCameras) {
       cameras = availableCameras;
 
@@ -76,13 +84,8 @@ class _CameraScreenState extends State<CameraScreen> {
   /// Display Camera preview.
   Widget _cameraPreviewWidget(BuildContext context) {
     if (cameraController == null || !cameraController.value.isInitialized) {
-      return const Text(
-        'Loading',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-          fontWeight: FontWeight.w900,
-        ),
+      return Center(
+          child: CircularProgressIndicator()
       );
     }
     var size = MediaQuery.of(context).size;
@@ -155,6 +158,7 @@ class _CameraScreenState extends State<CameraScreen> {
     return Scaffold(
       body: Container(
         child: SafeArea(
+          top: false,
           child: Stack(
             children: <Widget>[
               ClipRRect(
@@ -162,26 +166,29 @@ class _CameraScreenState extends State<CameraScreen> {
                       topLeft: Radius.circular(8.0),
                       topRight: Radius.circular(8.0)),
                   child: _cameraPreviewWidget(context)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  IconButton(
-                    color: Theme.of(context).iconTheme.color,
-                    icon: Icon(
-                      Icons.account_circle,
-                      size: 30.0,
+              SafeArea(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    SizedBox(height: 20.0),
+                    IconButton(
+                      color: Theme.of(context).iconTheme.color,
+                      icon: Icon(
+                        Icons.account_circle,
+                        size: 30.0,
+                      ),
+                      onPressed: () {
+                        print('Show account details');
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AccountDialog(
+                                  user: user,
+                                )
+                        );
+                      },
                     ),
-                    onPressed: () {
-                      print('Show account details');
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AccountDialog(
-                                user: 'Derek',
-                              )
-                      );
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

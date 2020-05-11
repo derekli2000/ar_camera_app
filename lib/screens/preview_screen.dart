@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
+import 'package:arcameraapp/screens/camera_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:arcameraapp/services/https_requests.dart';
@@ -19,6 +20,41 @@ class PreviewImageScreen extends StatefulWidget with SecureStoreMixin {
 class _PreviewImageScreenState extends State<PreviewImageScreen> {
   HttpRequests httpRequests = new HttpRequests();
 
+  _confirmSend(BuildContext context, String imagePath) {
+    return showDialog(
+        context: context,
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: Text('Confirm Send?'),
+          content: Text('Is this the picture you want to send?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            RaisedButton(
+              child: Text('Confirm'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)
+              ),
+              onPressed: () {
+                httpRequests.sendMultiFileRequest(imagePath);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CameraScreen()
+                    ),
+                    ModalRoute.withName('/CameraScreen'));
+              },
+            )
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,14 +71,14 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
               Expanded(
                   flex: 1,
                   child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: ClipRRect(
-												borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(
-                          File(widget.imagePath),
-                          fit: BoxFit.fitWidth,
-                        ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.file(
+                        File(widget.imagePath),
+                        fit: BoxFit.fitWidth,
                       ),
+                    ),
                   )),
               SizedBox(
                 height: 10.0,
@@ -56,9 +92,7 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
                         child: Icon(Icons.share),
                         onPressed: () {
                           print("pressed send");
-                          httpRequests.sendMultiFileRequest(widget.imagePath);
-                          // TODO: Create a confirmation dialog with navigator.pop
-//                          Navigator.pop(context);
+                          _confirmSend(context, widget.imagePath);
                         }),
                   )
                 ],

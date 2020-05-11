@@ -89,6 +89,10 @@ class LoginFormState extends State<LoginForm> {
 		}
 	}
 
+	_displayLoadingIndicator(BuildContext context) {
+		return new Center(child: CircularProgressIndicator());
+	}
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -152,6 +156,7 @@ class LoginFormState extends State<LoginForm> {
 									// Validate returns true if the form is valid, otherwise false.
 									if (form.validate()) {
 										print('$_username $_password');
+										_displayLoadingIndicator(context);
 										AuthService a = new AuthService();
 										var response = await a.loginUser(
 												username: _username,

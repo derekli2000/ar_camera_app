@@ -9,6 +9,11 @@ class SecureStoreMixin {
 	 await storage.write(key: key, value: value);
 	}
 
+	Future<String> getUsername() async {
+		String username = await storage.read(key: 'username');
+		return username;
+	}
+
 	void clearSecureStore() async {
 		await storage.deleteAll();
 	}

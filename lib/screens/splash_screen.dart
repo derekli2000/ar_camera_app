@@ -57,25 +57,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void handleInitialState() {
     AuthService a = new AuthService();
     a.getUser().then((User u) {
-      print('hello 1234');
       setState(() {
         print('handleInitialState: setState(${u.username})');
         user = u.username;
       });
     });
-  }
-
-  void navigateUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var status = prefs.getBool('isLoggedIn') ?? false;
-    print(status);
-    if (status) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) => CameraScreen()));
-    } else {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
-    }
   }
 }
 
