@@ -1,4 +1,3 @@
-import 'package:arcameraapp/main.dart';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
 import 'package:arcameraapp/widgets/account_dialog.dart';
 import 'package:camera/camera.dart';
@@ -8,6 +7,11 @@ import 'package:path_provider/path_provider.dart';
 import 'preview_screen.dart';
 
 class CameraScreen extends StatefulWidget {
+
+  final String shareFilePath;
+
+  const CameraScreen({Key key, this.shareFilePath}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _CameraScreenState();
@@ -144,7 +148,7 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PreviewImageScreen(imagePath: path),
+          builder: (context) => PreviewImageScreen(imagePath: path, sharedImagePath: widget.shareFilePath,),
         ),
       );
     } catch (e) {

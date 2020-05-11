@@ -6,7 +6,7 @@ import 'package:arcameraapp/screens/camera_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:arcameraapp/imports/index.dart';
+import 'package:flutter/material.dart';
 import 'package:arcameraapp/services/auth_service.dart';
 
 

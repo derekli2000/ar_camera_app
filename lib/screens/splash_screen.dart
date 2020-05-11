@@ -1,12 +1,12 @@
-import 'dart:async';
-
 import 'package:arcameraapp/models/user.dart';
 import 'package:arcameraapp/screens/login.dart';
 import 'package:arcameraapp/services/auth_service.dart';
-import 'package:camera/new/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+
+import 'dart:async';
 import 'camera_screen.dart';
+import 'file_picker.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -17,16 +17,77 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   String user;
+  StreamSubscription _intentDataStreamSubscription;
+  String sharedImagePath;
+  String sharedText;
 
   @override
   void initState() {
     super.initState();
     handleInitialState();
+    handleShareIntent();
+  }
+
+  // Determines whether the user is logged in or not
+  void handleInitialState() {
+    AuthService a = new AuthService();
+    a.getUser().then((User u) {
+      setState(() {
+        print('handleInitialState: setState(${u.username})');
+        user = u.username;
+      });
+    });
+  }
+
+  void handleShareIntent() {
+    // For sharing images coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
+        .listen((List<SharedMediaFile> value) {
+      setState(() {
+        sharedImagePath = (value?.map((f) => f.path)?.join(",") ?? "");
+        print("Shared:" + (value?.map((f) => f.path)?.join(",") ?? ""));
+      });
+    }, onError: (err) {
+      print("getIntentDataStream error: $err");
+    });
+
+    // For sharing images coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
+      setState(() {
+        sharedImagePath = (value?.map((f) => f.path)?.join(",") ?? "");
+        print("Shared:" + (value?.map((f) => f.path)?.join(",") ?? ""));
+      });
+    });
+
+    // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.getTextStream().listen((String value) {
+          setState(() {
+            sharedText = value;
+            print("Shared: $sharedText");
+          });
+        }, onError: (err) {
+          print("getLinkStream error: $err");
+        });
+
+    // For sharing or opening urls/text coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialText().then((String value) {
+      setState(() {
+        sharedText = value;
+        print("Shared: $sharedText");
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _intentDataStreamSubscription.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("first build $user");
+    print("first build $user $sharedImagePath");
     if (user == null) {
       return Scaffold(
         body: Container(
@@ -46,37 +107,18 @@ class _SplashScreenState extends State<SplashScreen> {
       ));
     }
 
+    if (sharedImagePath != null && sharedText != null) {
+      return Scaffold(
+        body: Container(
+          child: CameraScreen(shareFilePath: sharedImagePath,),
+        ),
+      );
+    }
+
     return Scaffold(
       body: Container(
-        child: CameraScreen(),
+        child: FilePickerPage(),
       ),
     );
   }
-
-  // Determines whether the user is logged in or not
-  void handleInitialState() {
-    AuthService a = new AuthService();
-    a.getUser().then((User u) {
-      setState(() {
-        print('handleInitialState: setState(${u.username})');
-        user = u.username;
-      });
-    });
-  }
 }
-
-//FutureBuilder(
-//        // get the Provider, and call the getUser method
-//        future: Provider.of<AuthService>(context).getUser(),
-//        // wait for the future to resolve and render the appropriate
-//        // widget for HomePage or LoginPage
-//        builder: (context, AsyncSnapshot snapshot) {
-//          if (snapshot.connectionState == ConnectionState.done) {
-//            return snapshot.hasData ? CameraScreen() : SplashScreen();
-//          } else {
-//            return CircularProgressIndicator(
-//              backgroundColor: Colors.red,
-//            );
-//          }
-//        },
-//      ),

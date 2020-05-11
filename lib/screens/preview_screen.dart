@@ -8,8 +8,9 @@ import 'package:arcameraapp/services/https_requests.dart';
 
 class PreviewImageScreen extends StatefulWidget with SecureStoreMixin {
   final String imagePath;
+  final String sharedImagePath;
 
-  PreviewImageScreen({Key key, this.imagePath}) : super(key: key);
+  PreviewImageScreen({Key key, this.imagePath, this.sharedImagePath}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -20,7 +21,7 @@ class PreviewImageScreen extends StatefulWidget with SecureStoreMixin {
 class _PreviewImageScreenState extends State<PreviewImageScreen> {
   HttpRequests httpRequests = new HttpRequests();
 
-  _confirmSend(BuildContext context, String imagePath) {
+  _confirmSend(BuildContext context, String imagePath, String sharedImagePath) {
     return showDialog(
         context: context,
         child: AlertDialog(
@@ -42,7 +43,7 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
                 borderRadius: BorderRadius.circular(8.0)
               ),
               onPressed: () {
-                httpRequests.sendMultiFileRequest(imagePath);
+                httpRequests.sendMultiFileRequest(imagePath, sharedImagePath);
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
@@ -92,7 +93,7 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
                         child: Icon(Icons.share),
                         onPressed: () {
                           print("pressed send");
-                          _confirmSend(context, widget.imagePath);
+                          _confirmSend(context, widget.imagePath, widget.sharedImagePath);
                         }),
                   )
                 ],

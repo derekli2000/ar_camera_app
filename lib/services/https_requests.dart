@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:arcameraapp/imports/index.dart';
+export 'package:path/path.dart' show join;
+export 'package:path_provider/path_provider.dart';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
 import 'package:http/http.dart' as http;
 import 'package:arcameraapp/models/user.dart';
@@ -24,7 +24,8 @@ class HttpRequests with SecureStoreMixin{
 		return responseCode;
 	}
 
-	void sendMultiFileRequest(String imagePath) async {
+	void sendMultiFileRequest(String imagePath, String sharedImagePath, [File internalFile]) async {
+		internalFile ??= null;
 		User user = await getCurrentUser();
 		var postUri = Uri.parse("https://marinater.herokuapp.com/api/ar/${user.username}");
 		var request = new http.MultipartRequest("POST", postUri);
@@ -33,7 +34,11 @@ class HttpRequests with SecureStoreMixin{
 
 		request.files.add(await http.MultipartFile.fromPath('capture', imagePath));
 		// Change to draggable file
-		request.files.add(await http.MultipartFile.fromPath('share_file', imagePath));
+		if (internalFile != null) {
+			request.files.add(await http.MultipartFile.fromPath('share_file', internalFile.path));
+		} else {
+			request.files.add(await http.MultipartFile.fromPath('share_file', sharedImagePath));
+		}
 
 		request.send().then((response) {
 			print(response.statusCode);
