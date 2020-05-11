@@ -1,3 +1,4 @@
+import 'package:arcameraapp/widgets/account_dialog.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -87,6 +88,7 @@ class _CameraScreenState extends State<CameraScreen> {
     var size = MediaQuery.of(context).size;
     double deviceRatio = size.width / size.height;
 
+    // Make the viewfinder take up the entire screen
     return Transform.scale(
       scale: cameraController.value.aspectRatio / deviceRatio,
       child: Center(
@@ -110,7 +112,7 @@ class _CameraScreenState extends State<CameraScreen> {
             mainAxisSize: MainAxisSize.max,
             children: [
               FloatingActionButton(
-                  child: Icon(Icons.camera),
+                  child: Icon(Icons.camera_alt),
                   onPressed: () {
                     _onCapturePressed(context);
                   })
@@ -150,7 +152,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         child: SafeArea(
@@ -162,6 +163,27 @@ class _CameraScreenState extends State<CameraScreen> {
                       topRight: Radius.circular(8.0)),
                   child: _cameraPreviewWidget(context)),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  IconButton(
+                    color: Theme.of(context).iconTheme.color,
+                    icon: Icon(
+                      Icons.account_circle,
+                      size: 30.0,
+                    ),
+                    onPressed: () {
+                      print('Show account details');
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AccountDialog(
+                                user: 'Derek',
+                              )
+                      );
+                    },
+                  ),
+                ],
+              ),
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _captureControlRowWidget(context),
@@ -172,35 +194,5 @@ class _CameraScreenState extends State<CameraScreen> {
         ),
       ),
     );
-//    return Scaffold(
-//      body: Container(
-//        child: SafeArea(
-//          child: Column(
-//            crossAxisAlignment: CrossAxisAlignment.stretch,
-//            children: <Widget>[
-//              Expanded(
-//                flex: 1,
-//                child: Padding(
-//                  padding: const EdgeInsets.all(8.0),
-//                  child: ClipRRect(
-//                      borderRadius: BorderRadius.circular(8.0),
-//                      child: _cameraPreviewWidget()
-//                  ),
-//                ),
-//              ),
-//              SizedBox(height: 10.0),
-//              Row(
-//                mainAxisAlignment: MainAxisAlignment.center,
-//                children: [
-////                  _cameraTogglesRowWidget(),
-//                  _captureControlRowWidget(context),
-//                ],
-//              ),
-//              SizedBox(height: 20.0)
-//            ],
-//          ),
-//        ),
-//      ),
-//    );
   }
 }
