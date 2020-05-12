@@ -87,7 +87,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("first build $user $sharedImagePath");
     if (user == null) {
       return Scaffold(
         body: Container(
