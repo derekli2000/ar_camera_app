@@ -24,6 +24,8 @@ class PreviewImageScreen extends StatefulWidget with SecureStoreMixin {
 class _PreviewImageScreenState extends State<PreviewImageScreen> {
   HttpRequests httpRequests = new HttpRequests();
   GlobalKey _filePosition = new GlobalKey();
+  String x;
+  String y;
 
   _confirmSend(BuildContext context, String imagePath, String sharedImagePath) {
     return showDialog(
@@ -46,7 +48,12 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0)),
               onPressed: () {
-                httpRequests.sendMultiFileRequest(imagePath, sharedImagePath);
+                final RenderBox filePositionBox =
+                _filePosition.currentContext.findRenderObject();
+                final positionFile = filePositionBox.localToGlobal(Offset.zero);
+                x = positionFile.dx.toString();
+                y = positionFile.dy.toString();
+                httpRequests.sendMultiFileRequest(imagePath, sharedImagePath, x, y);
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
@@ -56,13 +63,6 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
             )
           ],
         ));
-  }
-
-  _getPositions() {
-    final RenderBox filePositionBox =
-        _filePosition.currentContext.findRenderObject();
-    final positionFile = filePositionBox.localToGlobal(Offset.zero);
-    print("POSITION of File: $positionFile");
   }
 
   @override
@@ -111,7 +111,6 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
             child: Icon(Icons.share),
             onPressed: () {
               print("pressed send");
-              _getPositions();
               _confirmSend(
                   context, widget.imagePath, widget.sharedImagePath);
             }),

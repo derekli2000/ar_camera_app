@@ -24,16 +24,18 @@ class HttpRequests with SecureStoreMixin{
 		return responseCode;
 	}
 
-	void sendMultiFileRequest(String imagePath, String sharedImagePath, [File internalFile]) async {
+	void sendMultiFileRequest(String imagePath, String sharedImagePath, String x, String y, [File internalFile]) async {
 		internalFile ??= null;
 		User user = await getCurrentUser();
-		var postUri = Uri.parse("https://marinater.herokuapp.com/api/ar/${user.username}");
+		var postUri = Uri.parse('http://ar-trackpad.herokuapp.com/user/${user.username}');
 		var request = new http.MultipartRequest("POST", postUri);
 		String encoded = _convertToBase64(user.username, user.password);
+		
 		request.headers['authorization'] = 'Basic $encoded';
-
+		request.headers['x'] = x;
+		request.headers['y'] = y;
 		request.files.add(await http.MultipartFile.fromPath('capture', imagePath));
-		// Change to draggable file
+
 		if (internalFile != null) {
 			request.files.add(await http.MultipartFile.fromPath('share_file', internalFile.path));
 		} else {
