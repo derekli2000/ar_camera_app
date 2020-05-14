@@ -3,12 +3,12 @@
  */
 
 import 'package:arcameraapp/screens/camera_screen.dart';
+import 'package:arcameraapp/screens/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:arcameraapp/services/auth_service.dart';
-
 
 class LoginForm extends StatefulWidget {
   @override
@@ -65,9 +65,9 @@ class LoginFormState extends State<LoginForm> {
 
 	void _displayErrors(int val) async {
 		switch (val) {
-			case 200:{
+			case 302:{
 				Navigator.push(context,
-						MaterialPageRoute(builder: (BuildContext context) => CameraScreen()));
+						MaterialPageRoute(builder: (BuildContext context) => FilePickerPage()));
 				break;
 			}
 			case 401: {

@@ -5,8 +5,11 @@ export 'package:path_provider/path_provider.dart';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
 import 'package:http/http.dart' as http;
 import 'package:arcameraapp/models/user.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 
 class HttpRequests with SecureStoreMixin{
+	var cj = new CookieJar();
+
 	String _convertToBase64(String _username, String _password) {
 		String credentials = '$_username:$_password';
 		Codec<String, String> stringToBase64 = utf8.fuse(base64);
@@ -14,24 +17,36 @@ class HttpRequests with SecureStoreMixin{
 		return encoded;
 	}
 
+	String _concatCookies(List<Cookie> cookies) {
+		String result = '';
+		for (Cookie c in cookies) {
+			result += c.value;
+		}
+		return result;
+	}
+
 	Future authenticateLogin(String _username, String _password) async {
-		String encoded = _convertToBase64(_username, _password);
-		final response = await http.get(
-			'http://marinater.herokuapp.com/api/ar/$_username',
-			headers: {HttpHeaders.authorizationHeader: 'Basic $encoded'},
-		);
-		final responseCode = response.statusCode;
-		return responseCode;
+		var postUri = Uri.parse('http://ar-trackpad.herokuapp.com/auth/login');
+		final request = new http.MultipartRequest('POST', postUri);
+		request.headers['cookie'] = _concatCookies(cj.loadForRequest(postUri));
+		request.fields['username'] = _username;
+		request.fields['password'] = _password;
+		request.followRedirects = true;
+		final response = await request.send();
+		var cookie = Cookie.fromSetCookieValue(response.headers['set-cookie']);
+		List<Cookie> cookies = [cookie];
+		cj.saveFromResponse(postUri, cookies);
+		return response.statusCode;
+
 	}
 
 	void sendMultiFileRequest(String imagePath, String sharedImagePath, String x, String y, [File internalFile]) async {
 		internalFile ??= null;
 		User user = await getCurrentUser();
 		var postUri = Uri.parse('http://ar-trackpad.herokuapp.com/user/${user.username}');
-		var request = new http.MultipartRequest("POST", postUri);
-		String encoded = _convertToBase64(user.username, user.password);
+		var request = new http.MultipartRequest('POST', postUri);
 		
-		request.headers['authorization'] = 'Basic $encoded';
+		request.headers['cookie'] = _concatCookies(cj.loadForRequest(postUri));
 		request.headers['x'] = x;
 		request.headers['y'] = y;
 		request.files.add(await http.MultipartFile.fromPath('capture', imagePath));
