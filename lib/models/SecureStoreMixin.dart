@@ -1,30 +1,38 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'package:arcameraapp/services/https_requests.dart';
 import 'user.dart';
 
 class SecureStoreMixin {
-	final storage = new FlutterSecureStorage();
 
-	void setSecureStore(String key, String value) async {
-	 await storage.write(key: key, value: value);
+	static void setSecureStore(String key, String value) async {
+		final storage = new FlutterSecureStorage();
+
+		await storage.write(key: key, value: value);
 	}
 
-	Future<String> getUsername() async {
+	static Future<String> getUsername() async {
+		final storage = new FlutterSecureStorage();
+
 		String username = await storage.read(key: 'username');
 		return username;
 	}
 
-	void clearSecureStore() async {
+	static void clearSecureStore() async {
+		final storage = new FlutterSecureStorage();
+
 		await storage.deleteAll();
 	}
 
-	Future<User> getCurrentUser() async {
+	static Future<User> getCurrentUser() async {
+		final storage = new FlutterSecureStorage();
+
 		String username = await storage.read(key: 'username');
 		String password = await storage.read(key: 'password');
 
 		if (username == null) {
 			return new User('', '');
 		}
+		HttpRequests.authenticateLogin(username, password);
 
 		return new User(username, password);
 	}

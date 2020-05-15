@@ -13,25 +13,19 @@ class AuthService with SecureStoreMixin {
 	}
 
 	Future<User> getUser() async {
-		User u = await getCurrentUser();
+		User u = await SecureStoreMixin.getCurrentUser();
 		return u;
 	}
-
-//	Future logout() {
-//		this.currentUser = null;
-//		notifyListeners();
-//		return Future.value(currentUser);
-//	}
 
 	Future createUser(String username, String password) async {
 		// TODO: Create a new user and communicate with backend
 	}
 
 	Future<int> loginUser({String username, String password}) async {
-		var response = await httpRequests.authenticateLogin(username, password);
+		var response = await HttpRequests.authenticateLogin(username, password);
 		if (response == 302) {
-			setSecureStore('username', username);
-			setSecureStore('password', password);
+			SecureStoreMixin.setSecureStore('username', username);
+			SecureStoreMixin.setSecureStore('password', password);
 			return 302;
 		} else if (response == 401 || response == 403) {
 			return response;

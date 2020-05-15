@@ -44,7 +44,7 @@ class AccountDialog extends StatelessWidget with SecureStoreMixin {
                   alignment: Alignment.center,
                   child: FlatButton(
                     onPressed: () {
-                      clearSecureStore();
+                      SecureStoreMixin.clearSecureStore();
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

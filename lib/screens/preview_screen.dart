@@ -53,7 +53,7 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
                 final positionFile = filePositionBox.localToGlobal(Offset.zero);
                 x = positionFile.dx.toString();
                 y = positionFile.dy.toString();
-                httpRequests.sendMultiFileRequest(imagePath, sharedImagePath, x, y);
+                HttpRequests.sendMultiFileRequest(imagePath, sharedImagePath, x, y);
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

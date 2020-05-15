@@ -28,7 +28,7 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
   @override
   void initState() {
     super.initState();
-    getUsername().then((username) {
+    SecureStoreMixin.getUsername().then((username) {
       setState(() {
         user = username;
       });
