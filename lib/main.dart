@@ -1,7 +1,5 @@
-import 'package:arcameraapp/screens/camera_screen.dart';
 import 'package:arcameraapp/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-
 
 void main() => runApp(new MyApp());
 

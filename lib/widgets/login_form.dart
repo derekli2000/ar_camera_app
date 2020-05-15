@@ -2,10 +2,7 @@
 	This file allows for the validation of inputted data
  */
 
-import 'package:arcameraapp/screens/camera_screen.dart';
 import 'package:arcameraapp/screens/file_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:arcameraapp/services/auth_service.dart';
@@ -21,9 +18,6 @@ class LoginFormState extends State<LoginForm> {
 	// Create a global key that uniquely identifies the Form widget
 	// and allows validation
 	final _formKey = GlobalKey<FormState>();
-
-	// Saved preferences
-	Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
 	// Text Input Fields Controllers
 	final TextEditingController _usernameController = TextEditingController();

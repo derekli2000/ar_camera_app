@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
-import 'package:arcameraapp/screens/camera_screen.dart';
 import 'package:arcameraapp/widgets/zoomable_item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

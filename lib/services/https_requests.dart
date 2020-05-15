@@ -3,7 +3,6 @@ export 'package:path/path.dart' show join;
 export 'package:path_provider/path_provider.dart';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
 import 'package:http/http.dart' as http;
-import 'package:arcameraapp/models/user.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
 class HttpRequests with SecureStoreMixin {

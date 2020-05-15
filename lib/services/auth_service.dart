@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'https_requests.dart';
 
 import 'package:arcameraapp/models/user.dart';
