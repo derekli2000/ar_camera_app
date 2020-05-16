@@ -8,9 +8,11 @@ class AccountDialog extends StatelessWidget with SecureStoreMixin {
   AccountDialog({this.user});
 
   dialogContent(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
         Container(
+          width: size.width/1.5,
           padding: EdgeInsets.only(
             top: 28.0,
             bottom: 8.0,

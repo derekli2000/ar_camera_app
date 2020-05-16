@@ -92,9 +92,10 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
           child: CircularProgressIndicator()
       );
     }
-    var size = MediaQuery.of(context).size;
-    double deviceRatio = size.width / size.height;
 
+    final size = MediaQuery.of(context).size;
+    double deviceRatio = size.width / size.height;
+    print("${size.width}  ${size.height} $cameraController.value.aspectRatio");
     // Make the viewfinder take up the entire screen
     return Transform.scale(
       scale: cameraController.value.aspectRatio / deviceRatio,
