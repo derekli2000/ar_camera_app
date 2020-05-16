@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'https_requests.dart';
 
 import 'package:arcameraapp/models/user.dart';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
+
+import 'https_requests.dart';
 
 class AuthService with SecureStoreMixin {
 	HttpRequests httpRequests = new HttpRequests();
@@ -22,7 +23,7 @@ class AuthService with SecureStoreMixin {
 
 	Future<int> loginUser({String username, String password}) async {
 		var response = await HttpRequests.authenticateLogin(username, password);
-		if (response == 302) {
+		if (response == 302 || response == 200) {
 			SecureStoreMixin.setSecureStore('username', username);
 			SecureStoreMixin.setSecureStore('password', password);
 			return 302;
