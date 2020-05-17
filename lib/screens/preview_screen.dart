@@ -25,6 +25,17 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
   GlobalKey _filePosition = new GlobalKey();
   String x;
   String y;
+  String user;
+
+  @override
+  void initState() {
+    super.initState();
+    SecureStoreMixin.getUsername().then((String u) {
+      setState(() {
+        user = u;
+      });
+    });
+  }
 
   _confirmSend(BuildContext context, String imagePath, String sharedImagePath) {
     return showDialog(
@@ -48,15 +59,18 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
                   borderRadius: BorderRadius.circular(8.0)),
               onPressed: () {
                 final RenderBox filePositionBox =
-                _filePosition.currentContext.findRenderObject();
+                    _filePosition.currentContext.findRenderObject();
                 final positionFile = filePositionBox.localToGlobal(Offset.zero);
                 x = positionFile.dx.toString();
                 y = positionFile.dy.toString();
-                HttpRequests.sendMultiFileRequest(imagePath, sharedImagePath, x, y);
+                HttpRequests.sendMultiFileRequest(
+                    imagePath, sharedImagePath, x, y);
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => FilePickerPage()),
+                        builder: (BuildContext context) => FilePickerPage(
+                              user: user,
+                            )),
                     ModalRoute.withName('/FilePickerPage'));
               },
             )
@@ -86,7 +100,6 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
           iconTheme: Theme.of(context).iconTheme,
         ),
         backgroundColor: Colors.transparent,
-
         body: Stack(
           children: <Widget>[
             Container(
@@ -110,8 +123,7 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
             child: Icon(Icons.share),
             onPressed: () {
               print("pressed send");
-              _confirmSend(
-                  context, widget.imagePath, widget.sharedImagePath);
+              _confirmSend(context, widget.imagePath, widget.sharedImagePath);
             }),
       ),
     ]);
