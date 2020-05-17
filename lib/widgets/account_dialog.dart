@@ -1,6 +1,7 @@
 import 'package:arcameraapp/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:arcameraapp/models/SecureStoreMixin.dart';
+import 'package:arcameraapp/services/https_requests.dart';
 
 class AccountDialog extends StatelessWidget with SecureStoreMixin {
   final String user;
@@ -12,7 +13,7 @@ class AccountDialog extends StatelessWidget with SecureStoreMixin {
     return Stack(
       children: <Widget>[
         Container(
-          width: size.width/1.5,
+          width: size.width / 1.5,
           padding: EdgeInsets.only(
             top: 28.0,
             bottom: 8.0,
@@ -36,28 +37,28 @@ class AccountDialog extends StatelessWidget with SecureStoreMixin {
                 ),
               ),
               SizedBox(height: 16.0),
+              Divider(color: Colors.white),
               Container(
-                decoration: BoxDecoration(
-                  color: Colors.black38,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Align(
-                  alignment: Alignment.center,
                   child: FlatButton(
-                    onPressed: () {
-                      SecureStoreMixin.clearSecureStore();
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => LoginPage()
-													),
-                          ModalRoute.withName('/'));
-                    },
-                    child: Text('Log out'),
-                  ),
+                onPressed: () {
+                  HttpRequests.logoutUser();
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => LoginPage()),
+                      ModalRoute.withName('/'));
+                },
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.exit_to_app,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    SizedBox(width: 20.0),
+                    Text('Log out')
+                  ],
                 ),
-              ),
+              )),
               SizedBox(height: 26.0),
             ],
           ),

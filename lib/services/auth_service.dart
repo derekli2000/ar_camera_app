@@ -23,17 +23,14 @@ class AuthService with SecureStoreMixin {
 
 	Future<int> loginUser({String username, String password}) async {
 		var response = await HttpRequests.authenticateLogin(username, password);
-		if (response == 302 || response == 200) {
+		if (response == 200) {
 			SecureStoreMixin.setSecureStore('username', username);
 			SecureStoreMixin.setSecureStore('password', password);
-			return 302;
+			return 200;
 		} else if (response == 401 || response == 403) {
 			return response;
 		} else {
 			return null;
 		}
 	}
-
-
-
 }

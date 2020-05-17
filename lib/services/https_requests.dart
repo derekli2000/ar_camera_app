@@ -6,55 +6,66 @@ import 'package:http/http.dart' as http;
 import 'package:cookie_jar/cookie_jar.dart';
 
 class HttpRequests with SecureStoreMixin {
+  static String _concatCookies(List<Cookie> cookies) {
+    String result = 'connect.sid=';
+    for (Cookie c in cookies) {
+      result += c.value;
+    }
+    print(result);
+    return result;
+  }
 
-//	String _convertToBase64(String _username, String _password) {
-//		String credentials = '$_username:$_password';
-//		Codec<String, String> stringToBase64 = utf8.fuse(base64);
-//		String encoded = stringToBase64.encode(credentials);
-//		return encoded;
-//	}
+  static void logoutUser() async {
+    SecureStoreMixin.clearSecureStore();
 
-	static String _concatCookies(List<Cookie> cookies) {
-		String result = 'connect.sid=';
-		for (Cookie c in cookies) {
-			result += c.value;
-		}
-		return result;
-	}
+    var cj = new CookieJar();
+    var getUri = Uri.parse(
+        'http://ar-trackpad.herokuapp.com/auth/logout?redirect=noredirect');
 
-	static Future authenticateLogin(String _username, String _password) async {
-		var cj = new CookieJar();
+    final request = new http.MultipartRequest('GET', getUri);
+    request.headers['cookie'] = _concatCookies(cj.loadForRequest(getUri));
+    final response = await request.send();
+    print(response.statusCode);
+  }
 
-		var postUri = Uri.parse('http://ar-trackpad.herokuapp.com/auth/login');
-		final request = new http.MultipartRequest('POST', postUri);
-		request.headers['cookie'] = _concatCookies(cj.loadForRequest(postUri));
-		request.fields['username'] = _username;
-		request.fields['password'] = _password;
-		final response = await request.send();
-		var cookie = Cookie.fromSetCookieValue(response.headers['set-cookie']);
-		print('Cookie value Login: ${cookie.value}');
-		List<Cookie> cookies = [cookie];
-		cj.saveFromResponse(postUri, cookies);
-		return response.statusCode;
-	}
+  static Future authenticateLogin(String _username, String _password) async {
+    var cj = new CookieJar();
+    var postUri = Uri.parse(
+        'http://ar-trackpad.herokuapp.com/auth/login?redirect=noredirect');
 
-	static void sendMultiFileRequest(String imagePath, String sharedImagePath, String x, String y) async {
-		var cj = new CookieJar();
+    final request = new http.MultipartRequest('POST', postUri);
+    request.fields['username'] = _username;
+    request.fields['password'] = _password;
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      var cookie = Cookie.fromSetCookieValue(response.headers['set-cookie']);
+      print('Cookie value Login: ${cookie.value}');
+      List<Cookie> cookies = [cookie];
+      cj.saveFromResponse(postUri, cookies);
+    }
+    return response.statusCode;
+  }
 
-		String username = await SecureStoreMixin.getUsername();
-		var postUri = Uri.parse('http://ar-trackpad.herokuapp.com/api/user/$username');
-		var request = new http.MultipartRequest('POST', postUri);
+  static void sendMultiFileRequest(
+      String imagePath, String sharedImagePath, String x, String y) async {
+    var cj = new CookieJar();
 
-		request.headers['cookie'] = _concatCookies(cj.loadForRequest(postUri));
-		request.headers['x'] = x;
-		request.headers['y'] = y;
+    String username = await SecureStoreMixin.getUsername();
+    var postUri = Uri.parse(
+        'http://ar-trackpad.herokuapp.com/api/user/$username?redirect=noredirect');
+    var request = new http.MultipartRequest('POST', postUri);
 
-		print('Cookie value FILE: ${request.headers['cookie']}');
+    request.headers['cookie'] = _concatCookies(cj.loadForRequest(postUri));
+    request.fields['x'] = x;
+    request.fields['y'] = y;
 
-		request.files.add(await http.MultipartFile.fromPath('capture', imagePath));
-		request.files.add(await http.MultipartFile.fromPath('share_file', sharedImagePath));
+    print('Cookie value FILE: ${request.headers['cookie']}');
 
-		var response = await request.send();
-		print(response.statusCode);
-	}
+    request.files.add(await http.MultipartFile.fromPath('capture', imagePath));
+    request.files
+        .add(await http.MultipartFile.fromPath('share_file', sharedImagePath));
+
+    var response = await request.send();
+    print(response.statusCode);
+  }
 }

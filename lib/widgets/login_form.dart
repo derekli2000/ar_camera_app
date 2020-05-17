@@ -59,7 +59,7 @@ class LoginFormState extends State<LoginForm> {
 
 	void _displayErrors(int val) async {
 		switch (val) {
-			case 302:{
+			case 200:{
 				Navigator.push(context,
 						MaterialPageRoute(builder: (BuildContext context) => FilePickerPage()));
 				break;
