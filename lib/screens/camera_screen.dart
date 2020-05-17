@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import 'preview_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-
   final String shareFilePath;
 
   const CameraScreen({Key key, this.shareFilePath}) : super(key: key);
@@ -88,9 +87,7 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
   /// Display Camera preview.
   Widget _cameraPreviewWidget(BuildContext context) {
     if (cameraController == null || !cameraController.value.isInitialized) {
-      return Center(
-          child: CircularProgressIndicator()
-      );
+      return Center(child: CircularProgressIndicator());
     }
 
     final size = MediaQuery.of(context).size;
@@ -153,7 +150,10 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PreviewImageScreen(imagePath: path, sharedImagePath: widget.shareFilePath,),
+          builder: (context) => PreviewImageScreen(
+            imagePath: path,
+            sharedImagePath: widget.shareFilePath,
+          ),
         ),
       );
     } catch (e) {
@@ -168,6 +168,7 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
       body: Container(
         child: SafeArea(
           top: false,
+          bottom: false,
           child: Stack(
             children: <Widget>[
               ClipRRect(
@@ -192,8 +193,7 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
                             context: context,
                             builder: (BuildContext context) => AccountDialog(
                                   user: user,
-                                )
-                        );
+                                ));
                       },
                     ),
                   ],

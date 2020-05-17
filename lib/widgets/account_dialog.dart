@@ -29,17 +29,30 @@ class AccountDialog extends StatelessWidget with SecureStoreMixin {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
-                '$user',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w700,
-                ),
+              // Top bar in the dialog
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Icon(Icons.account_circle),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '$user',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 16.0),
               Divider(color: Colors.white),
-              Container(
-                  child: FlatButton(
+
+              FlatButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 onPressed: () {
                   HttpRequests.logoutUser();
                   Navigator.pushAndRemoveUntil(
@@ -58,30 +71,10 @@ class AccountDialog extends StatelessWidget with SecureStoreMixin {
                     Text('Log out')
                   ],
                 ),
-              )),
+              ),
               SizedBox(height: 26.0),
             ],
           ),
-        ),
-        Positioned(
-          top: 20,
-          child: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              print('pressed close');
-              Navigator.of(context).pop(); // To close the dialog
-            },
-          ),
-        ),
-        Positioned(
-          left: 50,
-          right: 50,
-          child: CircleAvatar(
-              backgroundColor: Colors.blue,
-              radius: 20.0,
-              child: Icon(
-                Icons.account_circle,
-              )),
         ),
       ],
     );

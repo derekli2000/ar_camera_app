@@ -116,7 +116,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       body: Container(
-        child: FilePickerPage(),
+        child: FilePickerPage(user: user),
       ),
     );
   }
