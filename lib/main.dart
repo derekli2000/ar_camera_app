@@ -15,6 +15,7 @@ void main() {
     } else {
       appTheme = darkTheme;
     }
+    print(themeSetting);
     runApp(
       ChangeNotifierProvider<ThemeNotifier>(
         create: (_) => ThemeNotifier(appTheme, themeSetting),

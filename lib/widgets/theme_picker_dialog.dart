@@ -44,7 +44,9 @@ class ThemeDialogState extends State<ThemePickerDialog> {
 							value: 'light',
 							groupValue: _themeSetting,
 							onChanged: (String value) {
+								themeNotifier.setTheme(lightTheme, value);
 								setState(() {
+									print('light $_themeSetting');
 									_themeSetting = value;
 								});
 							},
@@ -55,6 +57,8 @@ class ThemeDialogState extends State<ThemePickerDialog> {
 							value: 'dark',
 							groupValue: _themeSetting,
 							onChanged: (String value) {
+								print('dark $_themeSetting');
+								themeNotifier.setTheme(darkTheme, value);
 								setState(() {
 									_themeSetting = value;
 								});
@@ -66,7 +70,10 @@ class ThemeDialogState extends State<ThemePickerDialog> {
 							value: 'system',
 							groupValue: _themeSetting,
 							onChanged: (String value) {
+								themeNotifier.setTheme(Theme.of(context), value);
 								setState(() {
+									print('system $_themeSetting');
+
 									_themeSetting = value;
 								});
 							},
