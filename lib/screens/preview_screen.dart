@@ -97,7 +97,6 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          iconTheme: Theme.of(context).iconTheme,
         ),
         backgroundColor: Colors.transparent,
         body: Stack(

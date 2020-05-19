@@ -22,7 +22,7 @@ dependencies:
   camera:
   path_provider:
   path:
-  provider: ^3.0.0
+  provider: ^3.1.0
   http: ^0.12.0+4
   receive_sharing_intent:
   shared_preferences:

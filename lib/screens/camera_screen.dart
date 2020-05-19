@@ -92,7 +92,6 @@ class _CameraScreenState extends State<CameraScreen> with SecureStoreMixin {
 
     final size = MediaQuery.of(context).size;
     double deviceRatio = size.width / size.height;
-    print("${size.width}  ${size.height} $cameraController.value.aspectRatio");
     // Make the viewfinder take up the entire screen
     return ClipRect(
       child: Container(
